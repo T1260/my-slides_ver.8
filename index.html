@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>分岐付きスライドデモ</title>
+  <title>分岐付きスライドデモ（改良版）</title>
   <style>
     body {
       margin: 0;
@@ -27,7 +27,6 @@
       object-fit: cover;
     }
 
-    /* ✅ ボタンは固定配置 */
     .controls {
       position: fixed;
       bottom: 20px;
@@ -68,6 +67,20 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
 
+    .close-video {
+      position: absolute;
+      top: calc(50% - 200px);
+      right: calc(50% - 400px);
+      background-color: rgba(255, 80, 80, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      z-index: 60;
+      font-size: 14px;
+    }
+
     @media (max-width: 600px) {
       video { width: 90%; }
       button {
@@ -81,14 +94,14 @@
   <div id="slides"></div>
 
   <script>
-    // ✅ スライド設定（分岐あり）
+    // ✅ スライドデータ設定
     const slidesData = [
-      { image: "s1.JPG" },                               // 0
-      { image: "s2.JPG" },                               // 1
-      { image: "s3.JPG", branch: true },                 // 2 (A/B分岐)
-      { image: "a1.JPG", video: "m1.mp4", from: 2, to: 4 }, // 3 (Aスライド)
-      { image: "b1.JPG", video: "m1.mp4", from: 2, to: 4 }, // 4 (Bスライド)
-      { image: "s5.JPG", end: true }                     // 5 (終了)
+      { image: "s1.JPG" },                              // 0
+      { image: "s2.JPG" },                              // 1
+      { image: "s3.JPG", branch: true },                // 2 (分岐)
+      { image: "a1.jpg", video: "a1.mp4", from: 2, to: 5 }, // 3 (A)
+      { image: "b1.jpg", video: "b1.mp4", from: 2, to: 5 }, // 4 (B)
+      { image: "s5.jpg", end: true }                    // 5
     ];
 
     let currentSlide = 0;
@@ -110,8 +123,8 @@
       const controls = document.createElement("div");
       controls.className = "controls";
 
-      // 前へ
-      if (index > 0 && !slideData.branch) {
+      // 前へ（通常スライド用）
+      if (index > 0 && !slideData.branch && !slideData.from) {
         const backBtn = document.createElement("button");
         backBtn.textContent = "前へ";
         backBtn.onclick = () => showSlide(index - 1);
@@ -131,7 +144,7 @@
         controls.appendChild(bBtn);
       }
 
-      // ✅ 動画再生ボタン（A・Bスライド専用）
+      // ✅ 動画ボタン（A・Bスライド専用）
       if (slideData.video) {
         const videoBtn = document.createElement("button");
         videoBtn.textContent = "動画再生";
@@ -141,12 +154,25 @@
           video.controls = true;
           video.autoplay = true;
           slide.appendChild(video);
+
+          // ✅ 動画閉じるボタン
+          const closeBtn = document.createElement("button");
+          closeBtn.className = "close-video";
+          closeBtn.textContent = "動画を閉じる";
+          closeBtn.onclick = () => {
+            video.pause();
+            slide.removeChild(video);
+            slide.removeChild(closeBtn);
+            videoBtn.disabled = false;
+          };
+          slide.appendChild(closeBtn);
+
           videoBtn.disabled = true;
         };
         controls.appendChild(videoBtn);
       }
 
-      // ✅ 「3に戻る」ボタン（A・Bスライド用）
+      // ✅ 「3に戻る」ボタン（A・Bスライド）
       if (slideData.from !== undefined) {
         const backTo3Btn = document.createElement("button");
         backTo3Btn.textContent = "3枚目に戻る";
@@ -154,7 +180,7 @@
         controls.appendChild(backTo3Btn);
       }
 
-      // ✅ 「5へ進む」ボタン（A・Bスライド用）
+      // ✅ 「5へ進む」ボタン（A・Bスライド）
       if (slideData.to !== undefined) {
         const goTo5Btn = document.createElement("button");
         goTo5Btn.textContent = "5枚目へ";
@@ -162,7 +188,7 @@
         controls.appendChild(goTo5Btn);
       }
 
-      // ✅ 終了スライド（最初に戻る）
+      // ✅ 終了スライド
       if (slideData.end) {
         const restartBtn = document.createElement("button");
         restartBtn.textContent = "最初に戻る";
@@ -170,8 +196,8 @@
         controls.appendChild(restartBtn);
       }
 
-      // 通常の「次へ」
-      if (!slideData.branch && !slideData.end && !slideData.video && slideData.from === undefined) {
+      // ✅ 通常「次へ」ボタン
+      if (!slideData.branch && !slideData.end && slideData.from === undefined && slideData.to === undefined) {
         const nextBtn = document.createElement("button");
         nextBtn.textContent = "次へ";
         nextBtn.onclick = () => showSlide(index + 1);
@@ -188,3 +214,4 @@
   </script>
 </body>
 </html>
+
