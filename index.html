@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>分岐付きスライドデモ（改良版）</title>
+  <title>分岐付きスライドデモ（現実音/非現実音版）</title>
   <style>
     body {
       margin: 0;
@@ -99,8 +99,8 @@
       { image: "s1.JPG" },                              // 0
       { image: "s2.JPG" },                              // 1
       { image: "s3.JPG", branch: true },                // 2 (分岐)
-      { image: "a1.JPG", video: "m1.mp4", from: 2, to: 5 }, // 3 (A)
-      { image: "b1.JPG", video: "m1.mp4", from: 2, to: 5 }, // 4 (B)
+      { image: "a1.JPG", video: "a1.mp4", from: 2, to: 5 }, // 3 (現実音)
+      { image: "b1.JPG", video: "b1.mp4", from: 2, to: 5 }, // 4 (非現実音)
       { image: "s5.JPG", end: true }                    // 5
     ];
 
@@ -131,20 +131,20 @@
         controls.appendChild(backBtn);
       }
 
-      // ✅ 分岐スライド（A/B選択）
+      // ✅ 分岐スライド（現実音 / 非現実音）
       if (slideData.branch) {
-        const aBtn = document.createElement("button");
-        aBtn.textContent = "Aスライドへ";
-        aBtn.onclick = () => showSlide(3);
-        controls.appendChild(aBtn);
+        const realBtn = document.createElement("button");
+        realBtn.textContent = "現実音へ";
+        realBtn.onclick = () => showSlide(3);
+        controls.appendChild(realBtn);
 
-        const bBtn = document.createElement("button");
-        bBtn.textContent = "Bスライドへ";
-        bBtn.onclick = () => showSlide(4);
-        controls.appendChild(bBtn);
+        const unrealBtn = document.createElement("button");
+        unrealBtn.textContent = "非現実音へ";
+        unrealBtn.onclick = () => showSlide(4);
+        controls.appendChild(unrealBtn);
       }
 
-      // ✅ 動画ボタン（A・Bスライド専用）
+      // ✅ 動画ボタン（現実音/非現実音スライド専用）
       if (slideData.video) {
         const videoBtn = document.createElement("button");
         videoBtn.textContent = "動画再生";
@@ -172,7 +172,7 @@
         controls.appendChild(videoBtn);
       }
 
-      // ✅ 「3に戻る」ボタン（A・Bスライド）
+      // ✅ 「3に戻る」ボタン（現実音/非現実音）
       if (slideData.from !== undefined) {
         const backTo3Btn = document.createElement("button");
         backTo3Btn.textContent = "3枚目に戻る";
@@ -180,7 +180,7 @@
         controls.appendChild(backTo3Btn);
       }
 
-      // ✅ 「5へ進む」ボタン（A・Bスライド）
+      // ✅ 「5へ進む」ボタン（現実音/非現実音）
       if (slideData.to !== undefined) {
         const goTo5Btn = document.createElement("button");
         goTo5Btn.textContent = "5枚目へ";
