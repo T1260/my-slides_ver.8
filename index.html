@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>分岐付きスライドデモ</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+    }
+
+    .slide {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ✅ ボタンは固定配置 */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 0;
+      border-radius: 12px;
+    }
+
+    button {
+      background-color: rgba(255,255,255,0.8);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: rgba(255,255,255,1);
+    }
+
+    video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 800px;
+      border-radius: 12px;
+      z-index: 50;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    @media (max-width: 600px) {
+      video { width: 90%; }
+      button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="slides"></div>
+
+  <script>
+    // ✅ スライド設定（分岐あり）
+    const slidesData = [
+      { image: "s1.JPG" },                               // 0
+      { image: "s2.JPG" },                               // 1
+      { image: "s3.JPG", branch: true },                 // 2 (A/B分岐)
+      { image: "a1.JPG", video: "m1.mp4", from: 2, to: 4 }, // 3 (Aスライド)
+      { image: "b1.JPG", video: "m1.mp4", from: 2, to: 4 }, // 4 (Bスライド)
+      { image: "s5.JPG", end: true }                     // 5 (終了)
+    ];
+
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      const slidesContainer = document.getElementById("slides");
+      slidesContainer.innerHTML = "";
+
+      const slideData = slidesData[index];
+      if (!slideData) return;
+
+      const slide = document.createElement("div");
+      slide.className = "slide";
+
+      const img = document.createElement("img");
+      img.src = slideData.image;
+      slide.appendChild(img);
+
+      const controls = document.createElement("div");
+      controls.className = "controls";
+
+      // 前へ
+      if (index > 0 && !slideData.branch) {
+        const backBtn = document.createElement("button");
+        backBtn.textContent = "前へ";
+        backBtn.onclick = () => showSlide(index - 1);
+        controls.appendChild(backBtn);
+      }
+
+      // ✅ 分岐スライド（A/B選択）
+      if (slideData.branch) {
+        const aBtn = document.createElement("button");
+        aBtn.textContent = "Aスライドへ";
+        aBtn.onclick = () => showSlide(3);
+        controls.appendChild(aBtn);
+
+        const bBtn = document.createElement("button");
+        bBtn.textContent = "Bスライドへ";
+        bBtn.onclick = () => showSlide(4);
+        controls.appendChild(bBtn);
+      }
+
+      // ✅ 動画再生ボタン（A・Bスライド専用）
+      if (slideData.video) {
+        const videoBtn = document.createElement("button");
+        videoBtn.textContent = "動画再生";
+        videoBtn.onclick = () => {
+          const video = document.createElement("video");
+          video.src = slideData.video;
+          video.controls = true;
+          video.autoplay = true;
+          slide.appendChild(video);
+          videoBtn.disabled = true;
+        };
+        controls.appendChild(videoBtn);
+      }
+
+      // ✅ 「3に戻る」ボタン（A・Bスライド用）
+      if (slideData.from !== undefined) {
+        const backTo3Btn = document.createElement("button");
+        backTo3Btn.textContent = "3枚目に戻る";
+        backTo3Btn.onclick = () => showSlide(slideData.from);
+        controls.appendChild(backTo3Btn);
+      }
+
+      // ✅ 「5へ進む」ボタン（A・Bスライド用）
+      if (slideData.to !== undefined) {
+        const goTo5Btn = document.createElement("button");
+        goTo5Btn.textContent = "5枚目へ";
+        goTo5Btn.onclick = () => showSlide(slideData.to);
+        controls.appendChild(goTo5Btn);
+      }
+
+      // ✅ 終了スライド（最初に戻る）
+      if (slideData.end) {
+        const restartBtn = document.createElement("button");
+        restartBtn.textContent = "最初に戻る";
+        restartBtn.onclick = () => showSlide(0);
+        controls.appendChild(restartBtn);
+      }
+
+      // 通常の「次へ」
+      if (!slideData.branch && !slideData.end && !slideData.video && slideData.from === undefined) {
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "次へ";
+        nextBtn.onclick = () => showSlide(index + 1);
+        controls.appendChild(nextBtn);
+      }
+
+      slide.appendChild(controls);
+      slidesContainer.appendChild(slide);
+      slide.style.display = "block";
+      currentSlide = index;
+    }
+
+    window.onload = () => showSlide(0);
+  </script>
+</body>
+</html>
