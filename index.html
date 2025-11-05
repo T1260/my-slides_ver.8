@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>分岐付きスライドデモ（現実音/非現実音版）</title>
+  <title>分岐付きスライドデモ（現実音/非現実音・最終版）</title>
   <style>
     body {
       margin: 0;
@@ -99,8 +99,8 @@
       { image: "s1.JPG" },                              // 0
       { image: "s2.JPG" },                              // 1
       { image: "s3.JPG", branch: true },                // 2 (分岐)
-      { image: "a1.JPG", video: "m1.mp4", from: 2, to: 5 }, // 3 (現実音)
-      { image: "b1.JPG", video: "m1.mp4", from: 2, to: 5 }, // 4 (非現実音)
+      { image: "a1.JPG", video: "a1.mp4", from: 2, to: 5 }, // 3 (現実音)
+      { image: "b1.JPG", video: "b1.mp4", from: 2, to: 5 }, // 4 (非現実音)
       { image: "s5.JPG", end: true }                    // 5
     ];
 
@@ -123,8 +123,8 @@
       const controls = document.createElement("div");
       controls.className = "controls";
 
-      // 前へ（通常スライド用）
-      if (index > 0 && !slideData.branch && !slideData.from) {
+      // ✅ 全スライド共通：「前へ」ボタン
+      if (index > 0) {
         const backBtn = document.createElement("button");
         backBtn.textContent = "前へ";
         backBtn.onclick = () => showSlide(index - 1);
@@ -180,12 +180,12 @@
         controls.appendChild(backTo3Btn);
       }
 
-      // ✅ 「5へ進む」ボタン（現実音/非現実音）
+      // ✅ 「次へ」ボタン（現実音/非現実音）
       if (slideData.to !== undefined) {
-        const goTo5Btn = document.createElement("button");
-        goTo5Btn.textContent = "5枚目へ";
-        goTo5Btn.onclick = () => showSlide(slideData.to);
-        controls.appendChild(goTo5Btn);
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "次へ";
+        nextBtn.onclick = () => showSlide(slideData.to);
+        controls.appendChild(nextBtn);
       }
 
       // ✅ 終了スライド
@@ -196,8 +196,8 @@
         controls.appendChild(restartBtn);
       }
 
-      // ✅ 通常「次へ」ボタン
-      if (!slideData.branch && !slideData.end && slideData.from === undefined && slideData.to === undefined) {
+      // ✅ 通常スライドの「次へ」
+      if (!slideData.branch && !slideData.end && slideData.from === undefined && slideData.to === undefined && index < slidesData.length - 1) {
         const nextBtn = document.createElement("button");
         nextBtn.textContent = "次へ";
         nextBtn.onclick = () => showSlide(index + 1);
@@ -214,6 +214,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
