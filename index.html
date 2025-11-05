@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>分岐付きスライドデモ（現実音/非現実音・最終版）</title>
+  <title>分岐付きスライドデモ（経路記憶付き最終版）</title>
   <style>
     body {
       margin: 0;
@@ -94,7 +94,6 @@
   <div id="slides"></div>
 
   <script>
-    // ✅ スライドデータ設定
     const slidesData = [
       { image: "s1.JPG" },                              // 0
       { image: "s2.JPG" },                              // 1
@@ -105,115 +104,13 @@
     ];
 
     let currentSlide = 0;
+    let previousSlide = 0; // ✅ 直前のスライドを記録
 
     function showSlide(index) {
       const slidesContainer = document.getElementById("slides");
-      slidesContainer.innerHTML = "";
+      slidesContainer.innerHTML = ""
 
-      const slideData = slidesData[index];
-      if (!slideData) return;
 
-      const slide = document.createElement("div");
-      slide.className = "slide";
-
-      const img = document.createElement("img");
-      img.src = slideData.image;
-      slide.appendChild(img);
-
-      const controls = document.createElement("div");
-      controls.className = "controls";
-
-      // ✅ 全スライド共通：「前へ」ボタン
-      if (index > 0) {
-        const backBtn = document.createElement("button");
-        backBtn.textContent = "前へ";
-        backBtn.onclick = () => showSlide(index - 1);
-        controls.appendChild(backBtn);
-      }
-
-      // ✅ 分岐スライド（現実音 / 非現実音）
-      if (slideData.branch) {
-        const realBtn = document.createElement("button");
-        realBtn.textContent = "現実音へ";
-        realBtn.onclick = () => showSlide(3);
-        controls.appendChild(realBtn);
-
-        const unrealBtn = document.createElement("button");
-        unrealBtn.textContent = "非現実音へ";
-        unrealBtn.onclick = () => showSlide(4);
-        controls.appendChild(unrealBtn);
-      }
-
-      // ✅ 動画ボタン（現実音/非現実音スライド専用）
-      if (slideData.video) {
-        const videoBtn = document.createElement("button");
-        videoBtn.textContent = "動画再生";
-        videoBtn.onclick = () => {
-          const video = document.createElement("video");
-          video.src = slideData.video;
-          video.controls = true;
-          video.autoplay = true;
-          slide.appendChild(video);
-
-          // ✅ 動画閉じるボタン
-          const closeBtn = document.createElement("button");
-          closeBtn.className = "close-video";
-          closeBtn.textContent = "動画を閉じる";
-          closeBtn.onclick = () => {
-            video.pause();
-            slide.removeChild(video);
-            slide.removeChild(closeBtn);
-            videoBtn.disabled = false;
-          };
-          slide.appendChild(closeBtn);
-
-          videoBtn.disabled = true;
-        };
-        controls.appendChild(videoBtn);
-      }
-
-      // ✅ 「3に戻る」ボタン（現実音/非現実音）
-      if (slideData.from !== undefined) {
-        const backTo3Btn = document.createElement("button");
-        backTo3Btn.textContent = "3枚目に戻る";
-        backTo3Btn.onclick = () => showSlide(slideData.from);
-        controls.appendChild(backTo3Btn);
-      }
-
-      // ✅ 「次へ」ボタン（現実音/非現実音）
-      if (slideData.to !== undefined) {
-        const nextBtn = document.createElement("button");
-        nextBtn.textContent = "次へ";
-        nextBtn.onclick = () => showSlide(slideData.to);
-        controls.appendChild(nextBtn);
-      }
-
-      // ✅ 終了スライド
-      if (slideData.end) {
-        const restartBtn = document.createElement("button");
-        restartBtn.textContent = "最初に戻る";
-        restartBtn.onclick = () => showSlide(0);
-        controls.appendChild(restartBtn);
-      }
-
-      // ✅ 通常スライドの「次へ」
-      if (!slideData.branch && !slideData.end && slideData.from === undefined && slideData.to === undefined && index < slidesData.length - 1) {
-        const nextBtn = document.createElement("button");
-        nextBtn.textContent = "次へ";
-        nextBtn.onclick = () => showSlide(index + 1);
-        controls.appendChild(nextBtn);
-      }
-
-      slide.appendChild(controls);
-      slidesContainer.appendChild(slide);
-      slide.style.display = "block";
-      currentSlide = index;
-    }
-
-    window.onload = () => showSlide(0);
-  </script>
-</body>
-</html>
 
 
 
